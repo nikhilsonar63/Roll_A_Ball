@@ -1,0 +1,62 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class LevalMenagar : MonoBehaviour
+{
+    public Camera_Follw CameraFollow;
+    public Collider woter_collider;
+    
+      private int nextleva;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        nextleva = SceneManager.GetActiveScene().buildIndex + 1;
+
+    }
+      void Relod()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+    }
+    IEnumerator Collider_off()
+    {
+        woter_collider.isTrigger = false; 
+        yield return new WaitForSeconds(5);
+        woter_collider.isTrigger = true;
+        Debug.Log("ok");
+    }
+   
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("wotar"))
+        {
+            CameraFollow.enabled = false;
+            Invoke("Relod", .5f);
+
+
+        }
+        if (other.gameObject.CompareTag("Sefa_Coin"))
+        {
+            StartCoroutine(Collider_off());
+            Debug.Log("startcoroutine ok");
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Finish"))
+        {
+            SceneManager.LoadScene(nextleva);
+            
+            
+            if (nextleva > PlayerPrefs.GetInt("unlockd_leval"))
+            {
+                 PlayerPrefs.SetInt("unlockd_leval", nextleva);
+            }
+        }
+    }
+}
